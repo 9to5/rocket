@@ -14,6 +14,6 @@ defmodule Rocket.Request do
     HTTPoison.post(url, payload |> Jason.encode!(), header) |> handle_response()
   end
 
-  defp handle_response({:ok, body}), do: body |> IO.inspect()
-  defp handle_response({:error, error}), do: error |> IO.inspect()
+  defp handle_response({:ok, _body} = result), do: result |> IO.inspect()
+  defp handle_response({:error, _error} = result), do: result |> IO.inspect()
 end
