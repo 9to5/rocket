@@ -3,7 +3,6 @@ defmodule Rocket.Request do
     Perform request to FCM
   "
 
-  use Retry
   alias Rocket.{Response, Config}
 
   def perform(payload) do
@@ -11,13 +10,10 @@ defmodule Rocket.Request do
   end
 
   defp post(payload) do
-    retry with: exp_backoff() |> randomize |> expiry(10_000) do
-      {:ok, %{header: header, url: url}} = Config.generate()
-      HTTPoison.post(url, payload |> Jason.encode!(), header)
-    after
-      result -> result |> IO.inspect()
-    else
-      error -> error |> IO.inspect()
-    end
+    {:ok, %{header: header, url: url}} = Config.generate()
+    HTTPoison.post(url, payload |> Jason.encode!(), header) |> handle_response()
   end
+
+  defp handle_response({:ok, body}), do: body |> IO.inspect()
+  defp handle_response({:error, error}), do: error |> IO.inspect()
 end

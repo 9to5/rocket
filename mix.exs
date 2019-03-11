@@ -27,7 +27,7 @@ defmodule Rocket.Mixfile do
 
   # Configuration for the OTP application
   def application do
-    [extra_applications: [:logger, :retry], mod: {Rocket.Application, []}]
+    [extra_applications: [:logger], mod: {Rocket.Application, []}]
   end
 
   defp description do
@@ -40,7 +40,6 @@ defmodule Rocket.Mixfile do
     [
       {:httpoison, "~> 1.5"},
       {:jason, "~> 1.1"},
-      {:retry, "~> 0.10.0"},
       {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
       {:goth, "~> 1.0"},
       {:gen_stage, "~> 0.14.1"}
