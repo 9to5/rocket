@@ -42,7 +42,7 @@ defmodule Rocket.Mixfile do
       {:jason, "~> 1.1"},
       {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
       {:goth, "~> 1.0"},
-      {:gen_stage, "~> 0.14.1"}
+      {:gen_stage, "~> 1.0"}
     ]
   end
 
