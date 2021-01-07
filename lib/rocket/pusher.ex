@@ -12,7 +12,7 @@ defmodule Rocket.Pusher do
   # def handle_events(events, _from, state) do
   def handle_events(events, _from, state) do
     for event <- events do
-      Rocket.Request.perform(event) |> IO.inspect()
+      Rocket.Request.perform(event)
     end
 
     # We are a consumer, so we would never emit items.
