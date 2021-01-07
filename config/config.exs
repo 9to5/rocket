@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :fcm, key: :value
+#     config :rocket, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:fcm, :key)
+#     Application.get_env(:rocket, :key)
 #
 # Or configure a 3rd-party app:
 #
@@ -29,6 +29,8 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 
-# config :rocket, fcm_server_key: {:system, "FCM_SERVER_KEY"} || System.get_env("FCM_SERVER_KEY")
+config :rocket,
+  response_handler: Rocket.Response.DefaultHandler,
+  workers: 2
 
 config :goth, config_module: Rocket.Config
