@@ -9,7 +9,6 @@ defmodule Rocket.Pusher do
     {:consumer, state, subscribe_to: [Rocket.PushCollector]}
   end
 
-  # def handle_events(events, _from, state) do
   def handle_events(events, _from, state) do
     for event <- events do
       Rocket.Request.perform(event)
