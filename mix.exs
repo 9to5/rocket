@@ -38,11 +38,12 @@ defmodule Rocket.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 1.5"},
+      {:httpoison, "~> 2.0"},
       {:jason, "~> 1.1"},
-      {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:goth, "~> 1.0"},
-      {:gen_stage, "~> 1.0"}
+      {:gen_stage, "~> 1.0"},
+      {:exvcr, "~> 0.13", only: :test}
     ]
   end
 
