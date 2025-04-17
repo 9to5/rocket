@@ -16,7 +16,10 @@ defmodule Rocket.Request do
   end
 
   defp handle_response({:ok, %HTTPoison.Response{status_code: status, body: body}}, payload, handler) do
-    handler.call(status, payload, body)
+    case body |> Jason.decode() do
+      {:ok, decoded_body} -> handler.call(status, payload, decoded_body)
+      {:error, error} -> Logger.error("[Rocket] JSON decode error #{error}, #{inspect(body)}")
+    end
   end
 
   defp handle_response({:error, %HTTPoison.Error{id: nil, reason: reason}}, _payload, _handler) do
