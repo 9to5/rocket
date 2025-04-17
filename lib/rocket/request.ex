@@ -15,8 +15,8 @@ defmodule Rocket.Request do
     HTTPoison.post(url, payload |> Jason.encode!(), header)
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: status}}, payload, handler) do
-    handler.call(status, payload)
+  defp handle_response({:ok, %HTTPoison.Response{status_code: status, body: body}}, payload, handler) do
+    handler.call(status, payload, body)
   end
 
   defp handle_response({:error, %HTTPoison.Error{id: nil, reason: reason}}, _payload, _handler) do
