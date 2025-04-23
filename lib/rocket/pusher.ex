@@ -1,4 +1,7 @@
 defmodule Rocket.Pusher do
+  @moduledoc """
+    Pusher sends FCM messages
+  """
   use GenStage
 
   def start_link do

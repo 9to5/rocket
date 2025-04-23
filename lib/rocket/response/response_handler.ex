@@ -1,6 +1,6 @@
 defmodule Rocket.Response.ResponseHandler do
-  @doc """
-  Handles status_code with payload
+  @moduledoc """
+  Handles status with payload
   """
-  @callback call(status_code :: Integer.t(), payload :: Map.t(), body :: Map.t()) :: any
+  @callback call(status :: integer(), payload :: map(), body :: map()) :: any
 end

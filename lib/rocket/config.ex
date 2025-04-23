@@ -8,7 +8,7 @@ defmodule Rocket.Config do
     {:ok, Keyword.put(config, :json, System.get_env("GCP_CREDENTIALS"))}
   end
 
-  def generate() do
+  def generate do
     with {:ok, %Goth.Token{token: access_token}} <- token(),
          header <- header(access_token),
          {:ok, project_id} <- get_project_id(),

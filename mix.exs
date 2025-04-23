@@ -14,8 +14,9 @@ defmodule Rocket.Mixfile do
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
-        "coveralls.post": :test,
         "coveralls.html": :test,
+        "coveralls.json": :test,
+        "coveralls.post": :test,
         vcr: :test,
         "vcr.delete": :test,
         "vcr.check": :test,
@@ -38,13 +39,16 @@ defmodule Rocket.Mixfile do
 
   defp deps do
     [
+      {:credo, "~> 1.7", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.18", only: :test},
+      {:exvcr, "~> 0.13", only: :test},
+      {:gen_stage, "~> 1.0"},
+      {:goth, "~> 1.0"},
       {:httpoison, "~> 2.0"},
       {:jason, "~> 1.1"},
+      {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:goth, "~> 1.0"},
-      {:gen_stage, "~> 1.0"},
-      {:exvcr, "~> 0.13", only: :test},
-      {:credo, "~> 0.10", only: :dev, runtime: false}
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false}
     ]
   end
 

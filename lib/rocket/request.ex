@@ -26,5 +26,5 @@ defmodule Rocket.Request do
     Logger.error("[Rocket] connection error #{reason}")
   end
 
-  defp response_handler(), do: Application.get_env(:rocket, :response_handler, Rocket.Response.DefaultHandler)
+  defp response_handler, do: Application.get_env(:rocket, :response_handler, Rocket.Response.DefaultHandler)
 end

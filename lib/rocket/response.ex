@@ -1,10 +1,10 @@
 defmodule Rocket.Response do
-  @moduledoc ~S"
-    Responses for Rocket
-  "
+  @moduledoc """
+    Handles responses for Rocket
+  """
 
-  alias HTTPoison.Response
   alias HTTPoison.Error
+  alias HTTPoison.Response
 
   @success_status 200..299
   @client_error_status 400..499

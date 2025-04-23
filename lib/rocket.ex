@@ -5,7 +5,6 @@ defmodule Rocket do
   """
 
   alias Rocket.Request
-  require Logger
 
   def push(payload) do
     Request.perform(payload)

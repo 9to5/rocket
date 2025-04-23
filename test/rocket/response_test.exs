@@ -1,9 +1,9 @@
 defmodule Rocket.ResponseTest do
   use ExUnit.Case, async: true
 
-  alias Rocket.Response
-  alias HTTPoison.Response, as: HTTPResponse
   alias HTTPoison.Error
+  alias HTTPoison.Response, as: HTTPResponse
+  alias Rocket.Response
 
   describe "parse/1" do
     test "handles successful response with valid JSON" do

@@ -1,4 +1,7 @@
 defmodule Rocket.PushCollector do
+  @moduledoc """
+    Push collector for Rocket responses.
+  """
   use GenStage
 
   # Client

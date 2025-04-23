@@ -1,4 +1,7 @@
 defmodule Rocket.Application do
+  @moduledoc """
+    Rocket application.
+  """
   use Application
 
   def start(_type, _args) do
