@@ -43,7 +43,8 @@ defmodule Rocket.Mixfile do
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:goth, "~> 1.0"},
       {:gen_stage, "~> 1.0"},
-      {:exvcr, "~> 0.13", only: :test}
+      {:exvcr, "~> 0.13", only: :test},
+      {:credo, "~> 0.10", only: :dev, runtime: false}
     ]
   end
 
