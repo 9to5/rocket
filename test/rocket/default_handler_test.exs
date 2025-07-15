@@ -1,7 +1,6 @@
 defmodule Rocket.Response.DefaultHandlerTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   import ExUnit.CaptureLog
-
   alias Rocket.Response.DefaultHandler
 
   describe "call/2" do

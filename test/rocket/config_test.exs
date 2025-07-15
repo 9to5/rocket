@@ -1,6 +1,5 @@
 defmodule Rocket.ConfigTest do
   use ExUnit.Case, async: true
-
   alias Rocket.Config
 
   describe "header/1" do

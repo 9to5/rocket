@@ -1,7 +1,6 @@
 defmodule Rocket.HTTPClientTest do
   use ExUnit.Case, async: true
   import Mox
-
   alias Finch.Response
   alias Rocket.HTTPClientMock
 

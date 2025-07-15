@@ -1,6 +1,5 @@
 defmodule Rocket.PushCollectorTest do
-  use ExUnit.Case
-
+  use ExUnit.Case, async: true
   alias Rocket.PushCollector
 
   describe "push/1" do
