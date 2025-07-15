@@ -5,8 +5,8 @@ defmodule Rocket.Request do
 
   require Logger
   alias Rocket.Config
-  alias Finch
   alias Mint.TransportError
+  alias Rocket.HTTPClient
 
   def perform(payload) do
     payload |> post() |> handle_response(payload, response_handler())
@@ -16,7 +16,8 @@ defmodule Rocket.Request do
     {:ok, %{header: header, url: url}} = Config.generate()
     body = Jason.encode!(payload)
     request = Finch.build(:post, url, header, body)
-    Finch.request(request, Rocket.Finch)
+    client = Application.get_env(:rocket, :http_client, Rocket.HTTPClient.Finch)
+    client.request(request, Rocket.Finch)
   end
 
   defp handle_response({:ok, %Finch.Response{status: status, body: body}}, payload, handler) do

@@ -34,3 +34,6 @@ config :rocket,
   workers: 2
 
 config :goth, config_module: Rocket.Config
+
+# HTTP client adapter; can be overridden in tests with Mox
+config :rocket, http_client: Rocket.HTTPClient.Finch

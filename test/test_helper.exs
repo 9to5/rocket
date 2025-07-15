@@ -1,5 +1,5 @@
 ExUnit.start()
 
-# Configure ExVCR cassette directory and filter sensitive request headers
-ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
-ExVCR.Config.filter_request_headers("Authorization")
+# Configure Mox for HTTP client mocking
+Mox.defmock(Rocket.HTTPClientMock, for: Rocket.HTTPClient)
+Application.put_env(:rocket, :http_client, Rocket.HTTPClientMock)

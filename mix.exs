@@ -39,7 +39,7 @@ defmodule Rocket.Mixfile do
     [
       {:credo, "~> 1.7", only: :dev, runtime: false},
       {:excoveralls, "~> 0.18.5", only: :test},
-      {:exvcr, "~> 0.17.1", only: :test},
+      {:mox, "~> 1.0", only: :test},
       {:gen_stage, "~> 1.0"},
       {:goth, "~> 1.4"},
       {:finch, "~> 0.16"},
