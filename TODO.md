@@ -31,7 +31,7 @@ This file contains tasks to bring the Rocket project up to modern standards.
 - [x] Replace HTTPoison calls with Finch and remove HTTPoison dependency.
 
 ## Testing
-- [ ] Ensure tests pass and upgrade ExVCR cassettes if necessary.
+- [ ] Ensure tests pass.
 - [x] Remove ExVCR dependency and switch to Mox for mocking/testing Finch requests.
 
 ## Documentation (Code)
