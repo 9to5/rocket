@@ -3,9 +3,9 @@
 This file contains tasks to bring the Rocket project up to modern standards.
 
 ## Project configuration
-- [ ] Bump Elixir requirement in `mix.exs` to match `.tool-versions` (currently `~> 1.5`).
-- [ ] Remove deprecated `build_embedded` and `start_permanent` options in `mix.exs`.
-- [ ] Import environment-specific configs in `config/config.exs` (`import_config "#{Mix.env()}.exs"`).
+- [x] Bump Elixir requirement in `mix.exs` to match `.tool-versions` (currently `~> 1.5`).
+- [x] Remove deprecated `build_embedded` and `start_permanent` options in `mix.exs`.
+- [x] Import environment-specific configs in `config/config.exs` (`import_config "#{Mix.env()}.exs"`).
 
 ## IDE / Editor
 - [ ] Remove `.elixir_ls/` directory and add to `.gitignore`.
