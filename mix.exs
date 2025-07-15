@@ -38,15 +38,15 @@ defmodule Rocket.Mixfile do
   defp deps do
     [
       {:credo, "~> 1.7", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.18", only: :test},
-      {:exvcr, "~> 0.13", only: :test},
+      {:excoveralls, "~> 0.18.5", only: :test},
+      {:exvcr, "~> 0.17.1", only: :test},
       {:gen_stage, "~> 1.0"},
-      {:goth, "~> 1.0"},
+      {:goth, "~> 1.4"},
       {:finch, "~> 0.16"},
-      {:jason, "~> 1.1"},
+      {:jason, "~> 1.4"},
       {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false}
+      {:sobelow, "~> 0.14.0", only: [:dev, :test], runtime: false}
     ]
   end
 

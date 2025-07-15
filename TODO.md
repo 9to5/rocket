@@ -26,7 +26,7 @@ This file contains tasks to bring the Rocket project up to modern standards.
 - [ ] Remove tracked `cover/` directory (coverage artifacts) and rely on CI reports.
 
 ## Dependencies
-- [ ] Update dependencies in `mix.exs` to latest versions (Credo, ExCoveralls, ExVCR, Goth, HTTPoison, Jason, Sobelow, etc.).
+- [x] Update dependencies in `mix.exs` to latest versions (Credo, ExCoveralls, ExVCR, Goth, HTTPoison, Jason, Sobelow, etc.).
 - [x] Add Finch dependency to support replacement of HTTPoison.
 - [x] Replace HTTPoison calls with Finch and remove HTTPoison dependency.
 
