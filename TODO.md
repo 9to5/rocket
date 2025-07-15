@@ -32,6 +32,7 @@ This file contains tasks to bring the Rocket project up to modern standards.
 
 ## Testing
 - [ ] Ensure tests pass and upgrade ExVCR cassettes if necessary.
+- [ ] Remove ExVCR dependency and switch to Mox for mocking/testing Finch requests.
 
 ## Documentation (Code)
 - [ ] Add or improve module and function docs throughout `lib/`.
