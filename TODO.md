@@ -37,6 +37,10 @@ This file contains tasks to bring the Rocket project up to modern standards.
 ## Documentation (Code)
 - [ ] Add or improve module and function docs throughout `lib/`.
 
+## Examples
+
+- example.exs: Script to start the Rocket application and launch an IEx session for interactive testing.
+
 ## Refactor
 - [ ] Refactor Goth integration: remove automatic application startup in `application.ex` and require the consuming application to configure which named Goth instance to use.
 - [ ] Refactor Finch integration: remove automatic application startup in `application.ex` and require the consuming application to configure which named Finch instance to use.
