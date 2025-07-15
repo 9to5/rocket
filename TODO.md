@@ -35,4 +35,5 @@ This file contains tasks to bring the Rocket project up to modern standards.
 ## Documentation (Code)
 - [ ] Add or improve module and function docs throughout `lib/`.
 
-<!-- Add new tasks below -->
+## Refactor
+- [ ] Refactor Goth integration: remove automatic application startup in `application.ex` and require the consuming application to configure which named Goth instance to use.
