@@ -1,18 +1,32 @@
 #!/usr/bin/env elixir
 """
-Simple script to start the Rocket application and launch an IEx session for interactive testing.
+Standalone script to load and start the Rocket library for interactive use.
 
-Usage:
+Run this file directly to drop into IEx with the Rocket application started.
+
   ./example.exs
-  # or
-  iex --name demo -S mix run example.exs
+  # or in environments without a shell shebang:
+  elixir example.exs
 """
 
-# Ensure the application and its dependencies are started
+# Install runtime dependencies via Mix.install/2
+Mix.install([
+  {:finch, "~> 0.16"},
+  {:gen_stage, "~> 1.0"},
+  {:goth, "~> 1.4"},
+  {:jason, "~> 1.4"}
+])
+
+# Load application configuration and code
+Code.require_file("config/config.exs")
+Enum.each(Path.wildcard("lib/**/*.ex"), &Code.require_file/1)
+
+# Start the Rocket application
 {:ok, _} = Application.ensure_all_started(:rocket)
 
-IO.puts("Rocket application started.")
-IO.puts("You can now call Rocket.Config.generate()/1 or Rocket.Request.perform/1 interactively.")
+IO.puts("Rocket application started. 🚀")
+IO.puts("Interactively call Rocket.Config.generate/1, Rocket.Request.perform/1, etc.")
 
-# Launch an IEx shell
+# Configure IEx and enter shell
+IEx.configure(history_size: 500)
 IEx.start()
