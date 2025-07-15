@@ -9,6 +9,7 @@ defmodule Rocket.Application do
 
     children =
       [
+        {Finch, name: Rocket.Finch},
         Rocket.PushCollector
       ]
       |> add_worker(number_of_workers, 1)

@@ -27,7 +27,8 @@ This file contains tasks to bring the Rocket project up to modern standards.
 
 ## Dependencies
 - [ ] Update dependencies in `mix.exs` to latest versions (Credo, ExCoveralls, ExVCR, Goth, HTTPoison, Jason, Sobelow, etc.).
-- [ ] Consider replacing HTTPoison with Finch.
+- [x] Add Finch dependency to support replacement of HTTPoison.
+- [x] Replace HTTPoison calls with Finch and remove HTTPoison dependency.
 
 ## Testing
 - [ ] Ensure tests pass and upgrade ExVCR cassettes if necessary.
@@ -37,3 +38,4 @@ This file contains tasks to bring the Rocket project up to modern standards.
 
 ## Refactor
 - [ ] Refactor Goth integration: remove automatic application startup in `application.ex` and require the consuming application to configure which named Goth instance to use.
+- [ ] Refactor Finch integration: remove automatic application startup in `application.ex` and require the consuming application to configure which named Finch instance to use.

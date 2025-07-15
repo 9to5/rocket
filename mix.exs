@@ -42,7 +42,7 @@ defmodule Rocket.Mixfile do
       {:exvcr, "~> 0.13", only: :test},
       {:gen_stage, "~> 1.0"},
       {:goth, "~> 1.0"},
-      {:httpoison, "~> 2.0"},
+      {:finch, "~> 0.16"},
       {:jason, "~> 1.1"},
       {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
