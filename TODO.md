@@ -8,7 +8,7 @@ This file contains tasks to bring the Rocket project up to modern standards.
 - [x] Import environment-specific configs in `config/config.exs` (`import_config "#{Mix.env()}.exs"`).
 
 ## IDE / Editor
-- [ ] Remove `.elixir_ls/` directory and add to `.gitignore`.
+- [x] Remove `.elixir_ls/` directory and add to `.gitignore`.
 
 ## Security and Static Analysis
 - [ ] Rename `.sowbelow-conf` to `.sobelow-conf` to properly configure Sobelow.
