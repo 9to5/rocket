@@ -5,10 +5,8 @@ defmodule Rocket.Mixfile do
     [
       app: :rocket,
       version: "0.0.1",
-      elixir: "~> 1.5",
+      elixir: "~> 1.18",
       description: description(),
-      build_embedded: Mix.env() == :prod,
-      start_permanent: Mix.env() == :prod,
       package: package(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
