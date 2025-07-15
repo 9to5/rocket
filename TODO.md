@@ -11,9 +11,9 @@ This file contains tasks to bring the Rocket project up to modern standards.
 - [x] Remove `.elixir_ls/` directory and add to `.gitignore`.
 
 ## Security and Static Analysis
-- [ ] Rename `.sowbelow-conf` to `.sobelow-conf` to properly configure Sobelow.
-- [ ] Configure ExVCR in `test_helper.exs` (cassette directory, filters).
-- [ ] Enhance `.credo.exs` configuration with stricter lint checks (dead code, style, docs).
+- [x] Rename `.sowbelow-conf` to `.sobelow-conf` to properly configure Sobelow.
+- [x] Configure ExVCR in `test_helper.exs` (cassette directory, filters).
+- [x] Enhance `.credo.exs` configuration with stricter lint checks (dead code, style, docs).
 
 ## Documentation
 - [ ] Add `ExDoc` dependency and docs config to `mix.exs`.
