@@ -27,7 +27,7 @@ defmodule Rocket.Config do
   end
 
   def token do
-    Goth.Token.for_scope("https://www.googleapis.com/auth/firebase.messaging")
+    Goth.fetch("https://www.googleapis.com/auth/firebase.messaging")
   end
 
   def get_project_id do
