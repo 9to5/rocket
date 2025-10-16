@@ -12,7 +12,7 @@ This file contains tasks to bring the Rocket project up to modern standards.
 
 ## Security and Static Analysis
 - [x] Rename `.sowbelow-conf` to `.sobelow-conf` to properly configure Sobelow.
-- [x] Configure ExVCR in `test_helper.exs` (cassette directory, filters).
+- [x] Remove ExVCR configuration from `test_helper.exs` (replaced with Mox HTTP client mocking).
 - [x] Enhance `.credo.exs` configuration with stricter lint checks (dead code, style, docs).
 
 ## Documentation
@@ -23,15 +23,16 @@ This file contains tasks to bring the Rocket project up to modern standards.
 ## CI / CD
 - [ ] Add CI, coverage, documentation, and hex.pm badges to `README.md`.
 - [ ] Add GitHub issue and pull request templates (`.github/ISSUE_TEMPLATE`, `.github/PULL_REQUEST_TEMPLATE`).
-- [ ] Remove tracked `cover/` directory (coverage artifacts) and rely on CI reports.
+- [x] Remove tracked `cover/` directory (coverage artifacts) and rely on CI reports.
 
 ## Dependencies
 - [x] Update dependencies in `mix.exs` to latest versions (Credo, ExCoveralls, ExVCR, Goth, HTTPoison, Jason, Sobelow, etc.).
 - [x] Add Finch dependency to support replacement of HTTPoison.
-- [x] Replace HTTPoison calls with Finch and remove HTTPoison dependency.
+- [x] Replace HTTPoison calls with Finch.
+- [x] Cleanup unused HTTPoison and transitive dependencies from mix.lock (run `mix deps.unlock --unused`).
 
 ## Testing
-- [ ] Ensure tests pass.
+- [x] Ensure tests pass.
 - [x] Remove ExVCR dependency and switch to Mox for mocking/testing Finch requests.
 
 ## Documentation (Code)

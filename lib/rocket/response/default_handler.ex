@@ -5,7 +5,7 @@ defmodule Rocket.Response.DefaultHandler do
   @behaviour Rocket.Response.ResponseHandler
   require Logger
 
-  @impl Rocket.Response.ResponseHandler
+  @impl true
   def call(status, payload, body), do: do_call(status, payload, body)
 
   defp do_call(200, _payload, _body), do: Logger.info("[Rocket] success")

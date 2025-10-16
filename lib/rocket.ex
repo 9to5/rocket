@@ -1,7 +1,6 @@
 defmodule Rocket do
   @moduledoc """
-  The Worker of Push Client for Exq
-  PushWorker can be used to issue Firebase Downstream Messages.
+  Rocket client for FCM
   """
 
   alias Rocket.Request
