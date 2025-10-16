@@ -37,7 +37,7 @@ defmodule Rocket.Mixfile do
 
   defp deps do
     [
-      {:credo, "~> 1.7", only: :dev, runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18.5", only: :test},
       {:mox, "~> 1.0", only: :test},
       {:gen_stage, "~> 1.0"},
