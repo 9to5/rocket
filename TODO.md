@@ -11,7 +11,6 @@ This file contains tasks to bring the Rocket project up to modern standards.
 - [x] Remove `.elixir_ls/` directory and add to `.gitignore`.
 
 ## Security and Static Analysis
-- [x] Rename `.sowbelow-conf` to `.sobelow-conf` to properly configure Sobelow.
 - [x] Remove ExVCR configuration from `test_helper.exs` (replaced with Mox HTTP client mocking).
 - [x] Enhance `.credo.exs` configuration with stricter lint checks (dead code, style, docs).
 

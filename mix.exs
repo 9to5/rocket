@@ -45,8 +45,7 @@ defmodule Rocket.Mixfile do
       {:finch, "~> 0.16"},
       {:jason, "~> 1.4"},
       {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:sobelow, "~> 0.14.0", only: [:dev, :test], runtime: false}
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 
