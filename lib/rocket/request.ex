@@ -4,8 +4,8 @@ defmodule Rocket.Request do
   "
 
   require Logger
-  alias Rocket.Config
   alias Mint.TransportError
+  alias Rocket.Config
 
   def perform(payload) do
     payload |> post() |> handle_response(payload, response_handler())

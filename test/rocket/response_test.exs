@@ -1,7 +1,7 @@
 defmodule Rocket.ResponseTest do
   use ExUnit.Case, async: true
-  alias Mint.TransportError, as: Error
   alias Finch.Response, as: HTTPResponse
+  alias Mint.TransportError, as: Error
   alias Rocket.Response
 
   describe "parse/1" do
