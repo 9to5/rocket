@@ -5,57 +5,62 @@ defmodule Rocket.Mixfile do
     [
       app: :rocket,
       version: "0.0.1",
-      elixir: "~> 1.5",
+      elixir: "~> 1.18",
       description: description(),
-      build_embedded: Mix.env() == :prod,
+      docs: docs(),
       start_permanent: Mix.env() == :prod,
       package: package(),
-      test_coverage: [tool: ExCoveralls],
+      test_coverage: [summary: [threshold: 90]],
       preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test,
-        vcr: :test,
-        "vcr.delete": :test,
-        "vcr.check": :test,
-        "vcr.show": :test
+        credo: :test,
+        "test.coverage": :test
       ],
       deps: deps()
     ]
   end
 
-  # Configuration for the OTP application
   def application do
     [extra_applications: [:logger], mod: {Rocket.Application, []}]
   end
 
   defp description do
     """
-    A Firebase Cloud Message HTTP v1 client for Elixir
+    A Firebase Cloud Messaging HTTP v1 client for Elixir.
     """
   end
 
   defp deps do
     [
-      {:httpoison, "~> 2.0"},
-      {:jason, "~> 1.1"},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:goth, "~> 1.0"},
       {:gen_stage, "~> 1.0"},
-      {:exvcr, "~> 0.13", only: :test}
+      {:goth, "~> 1.4"},
+      {:httpoison, "~> 2.0"},
+      {:jason, "~> 1.4"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.36", only: :dev, runtime: false},
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
+      {:mix_test_watch, "~> 1.2", only: :dev, runtime: false},
+      {:mox, "~> 1.2", only: :test}
     ]
   end
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      files: ["lib", "mix.exs", "README*", "CHANGELOG*", "LICENSE*"],
       maintainers: ["Tom Pesman"],
       licenses: ["MIT"],
       links: %{
         "GitHub" => "https://github.com/9to5/rocket",
         "Docs" => "https://hexdocs.pm/rocket"
       }
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      source_url: "https://github.com/9to5/rocket",
+      extras: ["README.md", "CHANGELOG.md"]
     ]
   end
 end

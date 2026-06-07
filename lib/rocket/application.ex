@@ -1,19 +1,21 @@
 defmodule Rocket.Application do
+  @moduledoc false
+
   use Application
-  import Supervisor.Spec
 
   def start(_type, _args) do
     workers = Application.get_env(:rocket, :workers, 2)
-    children = [worker(Rocket.PushCollector, [0])] |> add_worker(workers, 1)
+    children = [Rocket.PushCollector] ++ pusher_children(workers)
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Rocket.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
-  defp add_worker(workers, amount, current) when amount == current, do: workers ++ [worker_id(current)]
-  defp add_worker(workers, amount, current), do: (workers ++ [worker_id(current)]) |> add_worker(amount, current + 1)
+  defp pusher_children(workers) when workers > 0 do
+    for worker_id <- 1..workers do
+      Supervisor.child_spec({Rocket.Pusher, []}, id: {Rocket.Pusher, worker_id})
+    end
+  end
 
-  defp worker_id(id), do: worker(Rocket.Pusher, [], id: id)
+  defp pusher_children(_workers), do: []
 end

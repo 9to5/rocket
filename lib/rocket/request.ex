@@ -1,30 +1,50 @@
 defmodule Rocket.Request do
   @moduledoc ~S"
-    Perform request to FCM
+    Performs requests to FCM.
   "
 
   require Logger
-  alias Rocket.Config
+  alias Rocket.Response
 
+  @spec perform(term()) :: {:ok, map()} | {:error, term()}
   def perform(payload) do
-    payload |> post() |> handle_response(payload, response_handler())
+    perform(payload, [])
   end
 
-  defp post(payload) do
-    {:ok, %{header: header, url: url}} = Config.generate()
-    HTTPoison.post(url, payload |> Jason.encode!(), header)
-  end
+  @spec perform(term(), keyword()) :: {:ok, map()} | {:error, term()}
+  def perform(payload, opts) do
+    handler = Keyword.get(opts, :response_handler, response_handler())
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: status, body: body}}, payload, handler) do
-    case body |> Jason.decode() do
-      {:ok, decoded_body} -> handler.call(status, payload, decoded_body)
-      {:error, error} -> Logger.error("[Rocket] JSON decode error #{error}, #{inspect(body)}")
+    with {:ok, encoded_payload} <- encode(payload),
+         {:ok, %{headers: headers, url: url}} <- config_provider().generate() do
+      url
+      |> http_client().post(encoded_payload, headers)
+      |> handle_response(payload, handler)
     end
   end
 
-  defp handle_response({:error, %HTTPoison.Error{id: nil, reason: reason}}, _payload, _handler) do
-    Logger.error("[Rocket] connection error #{reason}")
+  defp encode(payload) do
+    case Jason.encode(payload) do
+      {:ok, encoded} -> {:ok, encoded}
+      {:error, error} -> {:error, {:encode_error, error}}
+    end
   end
 
-  defp response_handler(), do: Application.get_env(:rocket, :response_handler, Rocket.Response.DefaultHandler)
+  defp handle_response({:ok, %HTTPoison.Response{status_code: status}} = response, payload, handler) do
+    parsed = Response.parse(response)
+    handler.call(status, payload, response_body(parsed))
+    parsed
+  end
+
+  defp handle_response({:error, %HTTPoison.Error{} = error}, _payload, _handler) do
+    Logger.error("[Rocket] connection error #{inspect(error.reason)}")
+    Response.parse({:error, error})
+  end
+
+  defp response_body({:ok, body}), do: body
+  defp response_body({:error, body}), do: body
+
+  defp config_provider, do: Application.get_env(:rocket, :config_provider, Rocket.Config)
+  defp http_client, do: Application.get_env(:rocket, :http_client, HTTPoison)
+  defp response_handler, do: Application.get_env(:rocket, :response_handler, Rocket.Response.DefaultHandler)
 end
