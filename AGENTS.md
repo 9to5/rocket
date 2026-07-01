@@ -10,9 +10,10 @@ Rocket is an Elixir library for Firebase Cloud Messaging HTTP v1. Phases 1-3 of 
 
 - The supported local toolchain is Elixir 1.18.3 / Erlang 26.2.5.8.
 - The test suite covers configuration, request handling, response parsing, default response logging, GenStage flow, supervision, and the public `Rocket.push/1` boundary.
-- Built-in Mix coverage enforces a 90% threshold; the latest local run reported 93.18% total coverage.
+- Built-in Mix coverage enforces a 90% threshold; the latest local run reported 91.43% total coverage.
 - CI runs formatting, compilation with warnings as errors, dependency audit, Credo, tests with coverage, and Dialyzer.
 - Response handlers implement `call/3`.
+- HTTP clients implement `Rocket.HTTPClient`; Rocket defaults to `Rocket.HTTPClient.Finch`.
 - `Rocket.push/1` is documented as the synchronous public request API.
 - GenStage producer/consumer modules remain available for queued internal processing.
 - Supervisor child specs and config syntax have been modernized.

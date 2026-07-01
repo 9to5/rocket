@@ -3,6 +3,8 @@ defmodule Rocket.HTTPClient do
   Behaviour for HTTP clients used by `Rocket.Request`.
   """
 
-  @callback post(String.t(), iodata(), [{String.t(), String.t()}]) ::
-              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+  @type response :: %{required(:status) => integer(), required(:body) => binary()}
+
+  @callback post(String.t(), [{String.t(), String.t()}], iodata(), keyword()) ::
+              {:ok, response()} | {:error, term()}
 end

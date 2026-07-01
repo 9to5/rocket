@@ -7,7 +7,7 @@ This project is an outdated Elixir library for sending Firebase Cloud Messaging 
 - [x] Add a comprehensive test suite before changing runtime behavior.
   - Target very high coverage, ideally 90%+ line coverage and meaningful branch/error coverage.
   - Cover `Rocket.Config`, `Rocket.Request`, `Rocket.Response`, `Rocket.Response.DefaultHandler`, `Rocket.PushCollector`, `Rocket.Pusher`, and `Rocket.Application`.
-  - Include success responses, client errors, server errors, invalid JSON bodies, HTTPoison errors, missing/invalid Goth configuration, and GenStage producer/consumer flow.
+  - Include success responses, client errors, server errors, invalid JSON bodies, Finch errors, missing/invalid Goth configuration, and GenStage producer/consumer flow.
   - Avoid live FCM/GCP calls in normal tests. Use explicit test doubles, dependency injection, or controlled mocks for Goth and HTTP clients.
 - [x] Make the local toolchain reproducible.
   - Resolved the mismatch between `mix.exs` and `.tool-versions`.
@@ -32,7 +32,7 @@ This project is an outdated Elixir library for sending Firebase Cloud Messaging 
   - Keep logging useful but avoid making logs the only observable result.
 - [x] Harden request error handling.
   - Handle configuration failures without pattern-match crashes.
-  - Handle `HTTPoison.Error` variants beyond `%HTTPoison.Error{id: nil, reason: reason}`.
+  - Handle Finch transport errors beyond simple timeout cases.
   - Avoid raising on JSON encoding failures unless that is intentionally part of the API.
 - [x] Add tests for concurrency and supervision.
   - Verify the configured worker count.
@@ -44,7 +44,7 @@ This project is an outdated Elixir library for sending Firebase Cloud Messaging 
 - [x] Replace deprecated supervisor child specs from `Supervisor.Spec` with modern child specs.
 - [x] Review dependency versions and remove unused dependencies.
   - `mix.lock` contains packages not listed in `mix.exs`, suggesting old development dependencies or stale lock entries.
-  - Confirm whether `exvcr`, `mix_test_watch`, `gen_stage`, `httpoison`, and `goth` are still the right choices.
+  - Confirm whether `mix_test_watch`, `gen_stage`, `finch`, and `goth` are still the right choices.
 - [x] Update configuration style for modern Elixir.
   - Replace `use Mix.Config` with `import Config` when the supported Elixir version allows it.
   - Move environment-specific configuration into explicit files only when needed.
@@ -57,6 +57,46 @@ This project is an outdated Elixir library for sending Firebase Cloud Messaging 
 
 ## Phase 4: Future Work
 
-- [ ] Evaluate new features only after the test, tooling, and modernization phases are stable.
-- [ ] Potential future feature ideas should be tracked separately from cleanup work.
-- [ ] Any future feature should include tests, documentation, and a compatibility note before implementation.
+- [ ] Define the Phase 4 public API before adding implementation.
+  - Decide whether queued delivery should be exposed as `Rocket.push_async/1`, `Rocket.push_many/1`, a supervised worker API, or a separate module.
+  - Keep `Rocket.push/1` as the synchronous API unless a breaking change is explicitly planned.
+  - Document return contracts, failure semantics, ordering guarantees, and backpressure behaviour before implementation.
+- [ ] Add payload validation helpers for FCM HTTP v1 messages.
+  - Validate that payloads include a `message` object and at least one supported target such as `token`, `topic`, or `condition`.
+  - Validate common notification, data, Android, APNs, and webpush shapes without trying to replace Firebase's full server-side validation.
+  - Return structured validation errors before encoding/posting.
+- [ ] Add a first-class batch API.
+  - Support sending many messages while preserving per-message results.
+  - Decide whether batching should be sequential, concurrent with a bounded concurrency limit, or queued through GenStage.
+  - Include tests for partial success, partial failure, ordering, and backpressure.
+- [ ] Design retry and rate-limit handling.
+  - Add configurable retry policy for retryable HTTP/client errors such as timeouts, 429, 500, and 503.
+  - Respect FCM retry hints if present in response headers or body.
+  - Ensure non-retryable validation/auth errors fail fast.
+  - Include tests for retry count, delay calculation, and eventual failure.
+- [ ] Add request options without global configuration mutation.
+  - Allow per-call overrides for response handler, timeout, retry policy, config provider, HTTP client, and telemetry metadata where appropriate.
+  - Keep defaults in application config for normal use.
+- [ ] Improve credential source support.
+  - Support service-account JSON from application config, environment variables, and file paths.
+  - Evaluate whether a supervised Goth token server should replace per-request token fetching.
+  - Document token caching, refresh behaviour, and deployment recommendations.
+- [ ] Add telemetry instrumentation.
+  - Emit events for request start/stop/exception, FCM status codes, retry attempts, queue depth, and pusher failures.
+  - Keep logs as a default handler, but make telemetry the primary integration point for observability.
+- [ ] Clarify and improve the queued delivery pipeline.
+  - Decide whether GenStage remains necessary or whether `Task.Supervisor`/Broadway is a better fit.
+  - Add configurable queue limits and overflow strategy.
+  - Add graceful shutdown/drain behaviour for queued messages.
+- [ ] Add richer response types.
+  - Convert common FCM error responses into named error structs or tagged tuples.
+  - Preserve raw response details where useful for debugging.
+  - Document compatibility guarantees for response shapes.
+- [ ] Add integration tests that can run explicitly against Firebase.
+  - Keep live tests disabled by default.
+  - Require opt-in environment variables and clear documentation.
+  - Ensure normal CI remains deterministic and does not require GCP credentials.
+- [ ] Prepare for a Hex release.
+  - Decide the next version number and whether API changes are breaking.
+  - Finalize changelog entries, generated docs, package files, and release checklist.
+  - Consider adding examples for Phoenix apps, releases, and supervised production usage.

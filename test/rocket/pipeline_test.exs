@@ -86,6 +86,35 @@ defmodule Rocket.PipelineTest do
     assert %{active: 4, specs: 4, workers: 4} = Supervisor.count_children(supervisor)
   end
 
+  test "application starts Finch when the default Finch client is configured" do
+    previous_client = Application.get_env(:rocket, :http_client)
+    previous_workers = Application.get_env(:rocket, :workers)
+
+    Application.put_env(:rocket, :http_client, Rocket.HTTPClient.Finch)
+    Application.put_env(:rocket, :workers, 1)
+
+    {:ok, supervisor} = Rocket.Application.start(:normal, [])
+    Process.unlink(supervisor)
+
+    on_exit(fn ->
+      if Process.alive?(supervisor), do: Supervisor.stop(supervisor)
+
+      if previous_client do
+        Application.put_env(:rocket, :http_client, previous_client)
+      else
+        Application.delete_env(:rocket, :http_client)
+      end
+
+      if previous_workers do
+        Application.put_env(:rocket, :workers, previous_workers)
+      else
+        Application.delete_env(:rocket, :workers)
+      end
+    end)
+
+    assert %{active: 3, specs: 3, workers: 3} = Supervisor.count_children(supervisor)
+  end
+
   test "application supports zero configured pusher workers" do
     previous_workers = Application.get_env(:rocket, :workers)
     Application.put_env(:rocket, :workers, 0)

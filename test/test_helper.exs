@@ -1,5 +1,7 @@
 ExUnit.start()
 
+Code.require_file("support/finch_test_client.ex", __DIR__)
+
 Mox.defmock(Rocket.ConfigProviderMock, for: Rocket.ConfigProvider)
 Mox.defmock(Rocket.HTTPClientMock, for: Rocket.HTTPClient)
 Mox.defmock(Rocket.ResponseHandlerMock, for: Rocket.Response.ResponseHandler)

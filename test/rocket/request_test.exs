@@ -4,8 +4,6 @@ defmodule Rocket.RequestTest do
   import ExUnit.CaptureLog
   import Mox
 
-  alias HTTPoison.Error
-  alias HTTPoison.Response
   alias Rocket.Request
 
   setup :verify_on_exit!
@@ -25,12 +23,13 @@ defmodule Rocket.RequestTest do
       {:ok, %{headers: [{"Authorization", "Bearer token"}], url: "https://example.test/send"}}
     end)
 
-    expect(Rocket.HTTPClientMock, :post, fn url, body, headers ->
+    expect(Rocket.HTTPClientMock, :post, fn url, headers, body, opts ->
       assert url == "https://example.test/send"
-      assert Jason.decode!(body) == payload
       assert headers == [{"Authorization", "Bearer token"}]
+      assert Jason.decode!(body) == payload
+      assert opts == [receive_timeout: 20_000]
 
-      {:ok, %Response{status_code: 200, body: ~s({"name":"messages/1"})}}
+      {:ok, %{status: 200, body: ~s({"name":"messages/1"})}}
     end)
 
     expect(Rocket.ResponseHandlerMock, :call, fn 200, ^payload, %{"name" => "messages/1"} -> :ok end)
@@ -45,8 +44,8 @@ defmodule Rocket.RequestTest do
       {:ok, %{headers: [], url: "https://example.test/send"}}
     end)
 
-    expect(Rocket.HTTPClientMock, :post, fn _url, _body, _headers ->
-      {:ok, %Response{status_code: 400, body: ~s({"error":"invalid"})}}
+    expect(Rocket.HTTPClientMock, :post, fn _url, _headers, _body, _opts ->
+      {:ok, %{status: 400, body: ~s({"error":"invalid"})}}
     end)
 
     expect(Rocket.ResponseHandlerMock, :call, fn 400, ^payload, %{"error" => "invalid"} -> :ok end)
@@ -61,8 +60,8 @@ defmodule Rocket.RequestTest do
       {:ok, %{headers: [], url: "https://example.test/send"}}
     end)
 
-    expect(Rocket.HTTPClientMock, :post, fn _url, _body, _headers ->
-      {:ok, %Response{status_code: 200, body: "not json"}}
+    expect(Rocket.HTTPClientMock, :post, fn _url, _headers, _body, _opts ->
+      {:ok, %{status: 200, body: "not json"}}
     end)
 
     expect(Rocket.ResponseHandlerMock, :call, fn 200, ^payload, {:invalid_json, %Jason.DecodeError{}, "not json"} ->
@@ -82,15 +81,15 @@ defmodule Rocket.RequestTest do
     assert {:error, {:encode_error, %Protocol.UndefinedError{}}} = Request.perform(self())
   end
 
-  test "returns HTTP client errors and logs the connection issue" do
+  test "returns Finch transport errors and logs the connection issue" do
     payload = %{"message" => %{}}
 
     expect(Rocket.ConfigProviderMock, :generate, fn ->
       {:ok, %{headers: [], url: "https://example.test/send"}}
     end)
 
-    expect(Rocket.HTTPClientMock, :post, fn _url, _body, _headers ->
-      {:error, %Error{reason: :timeout}}
+    expect(Rocket.HTTPClientMock, :post, fn _url, _headers, _body, _opts ->
+      {:error, %{reason: :timeout}}
     end)
 
     log =

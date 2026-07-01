@@ -4,7 +4,7 @@ defmodule Rocket.Mixfile do
   def project do
     [
       app: :rocket,
-      version: "0.0.1",
+      version: "0.1.0",
       elixir: "~> 1.18",
       description: description(),
       docs: docs(),
@@ -32,8 +32,8 @@ defmodule Rocket.Mixfile do
   defp deps do
     [
       {:gen_stage, "~> 1.0"},
+      {:finch, "~> 0.16 or ~> 0.22", optional: true},
       {:goth, "~> 1.4"},
-      {:httpoison, "~> 2.0"},
       {:jason, "~> 1.4"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},

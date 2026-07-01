@@ -29,7 +29,7 @@ import Config
 
 config :rocket,
   config_provider: Rocket.Config,
-  http_client: HTTPoison,
+  http_client: Rocket.HTTPClient.Finch,
   request_module: Rocket.Request,
   response_handler: Rocket.Response.DefaultHandler,
   workers: 2

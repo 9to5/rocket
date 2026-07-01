@@ -18,7 +18,7 @@ Add Rocket to your dependencies:
 ```elixir
 def deps do
   [
-    {:rocket, "~> 0.0.1"}
+    {:rocket, "~> 0.1"}
   ]
 end
 ```
@@ -81,6 +81,8 @@ mix credo --strict
 mix test --cover
 mix dialyzer --format short
 ```
+
+Rocket defaults to Finch for HTTP requests and starts a supervised pool named `Rocket.Finch` when the default client is used. Finch is an optional dependency; applications that provide their own `:http_client` do not need to include it.
 
 The coverage threshold is enforced by `mix test --cover` and is currently set to 90%.
 

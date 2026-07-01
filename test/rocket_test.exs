@@ -20,8 +20,8 @@ defmodule RocketTest do
       {:ok, %{headers: [], url: "https://example.test/send"}}
     end)
 
-    expect(Rocket.HTTPClientMock, :post, fn _url, _body, _headers ->
-      {:ok, %HTTPoison.Response{status_code: 200, body: ~s({"name":"messages/1"})}}
+    expect(Rocket.HTTPClientMock, :post, fn _url, _headers, _body, _opts ->
+      {:ok, %{status: 200, body: ~s({"name":"messages/1"})}}
     end)
 
     expect(Rocket.ResponseHandlerMock, :call, fn 200, ^payload, %{"name" => "messages/1"} -> :ok end)
