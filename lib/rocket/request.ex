@@ -15,28 +15,33 @@ defmodule Rocket.Request do
   def perform(payload, opts) do
     handler = Keyword.get(opts, :response_handler, response_handler())
 
-    with :ok <- validate_encodable(payload),
-         {:ok, response} <- post(payload) do
+    with {:ok, encoded_payload} <- encode(payload),
+         {:ok, response} <- post(encoded_payload) do
       handle_response(response, payload, handler)
     end
   end
 
-  defp validate_encodable(payload) do
+  defp encode(payload) do
     case Jason.encode(payload) do
-      {:ok, _encoded} -> :ok
-      {:error, error} -> {:error, {:encode_error, error}}
+      {:ok, encoded_payload} ->
+        {:ok, encoded_payload}
+
+      {:error, error} ->
+        Logger.error("[Rocket] JSON encoding error #{inspect(error)}")
+        {:error, {:encode_error, error}}
     end
   end
 
-  defp post(payload) do
-    with {:ok, %{headers: headers, url: url}} <- config_provider().generate() do
-      {:ok, http_client().post(url, headers, Jason.encode!(payload), receive_timeout: 20_000)}
-    end
-  rescue
-    error in [Jason.EncodeError, Protocol.UndefinedError] -> {:error, {:encode_error, error}}
-  end
+  defp post(encoded_payload) do
+    case config_provider().generate() do
+      {:ok, %{headers: headers, url: url}} ->
+        {:ok, http_client().post(url, headers, encoded_payload, receive_timeout: 20_000)}
 
-  defp handle_response({:error, {:encode_error, _error}} = error, _payload, _handler), do: error
+      {:error, reason} = error ->
+        Logger.error("[Rocket] configuration error #{inspect(reason)}")
+        error
+    end
+  end
 
   defp handle_response({:ok, %{status: status}} = response, payload, handler) do
     parsed = Response.parse(response)

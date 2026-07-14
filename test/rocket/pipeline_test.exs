@@ -2,6 +2,9 @@ defmodule Rocket.PipelineTest do
   use ExUnit.Case, async: false
 
   import ExUnit.CaptureLog
+  import Mox
+
+  setup :verify_on_exit!
 
   defmodule TestConsumer do
     use GenStage
@@ -30,7 +33,8 @@ defmodule Rocket.PipelineTest do
       case payload do
         :error -> {:error, :failed}
         :raise -> raise "request failed"
-        _payload -> :ok
+        :exit -> exit(:request_exited)
+        _payload -> {:ok, %{}}
       end
     end
   end
@@ -146,17 +150,57 @@ defmodule Rocket.PipelineTest do
   test "pusher isolates failed events and continues processing" do
     Application.put_env(:rocket, :request_test_pid, self())
 
-    capture_log(fn ->
-      assert {:noreply, [], :state} = Rocket.Pusher.handle_events([:error, :raise, :ok], self(), :state)
-    end)
+    log =
+      capture_log(fn ->
+        assert {:noreply, [], :state} =
+                 Rocket.Pusher.handle_events([:error, :raise, :exit, :ok], self(), :state)
+      end)
 
     assert_receive {:performed, :error}
     assert_receive {:performed, :raise}
+    assert_receive {:performed, :exit}
     assert_receive {:performed, :ok}
+
+    refute log =~ "[Rocket] push failed"
+    assert count_occurrences(log, "[Rocket] push raised: request failed") == 1
+    assert count_occurrences(log, "[Rocket] push exited: {:exit, :request_exited}") == 1
+  end
+
+  test "pusher delegates an HTTP error to the configured response handler exactly once" do
+    Application.put_env(:rocket, :request_module, Rocket.Request)
+    Application.put_env(:rocket, :config_provider, Rocket.ConfigProviderMock)
+    Application.put_env(:rocket, :http_client, Rocket.HTTPClientMock)
+    Application.put_env(:rocket, :response_handler, Rocket.ResponseHandlerMock)
+
+    payload = %{"message" => %{"token" => "bad-token"}}
+
+    expect(Rocket.ConfigProviderMock, :generate, fn ->
+      {:ok, %{headers: [], url: "https://example.test/send"}}
+    end)
+
+    expect(Rocket.HTTPClientMock, :post, fn _url, _headers, _body, _opts ->
+      {:ok, %{status: 400, body: ~s({"error":"invalid"})}}
+    end)
+
+    expect(Rocket.ResponseHandlerMock, :call, fn 400, ^payload, %{"error" => "invalid"} -> :ok end)
+
+    log =
+      capture_log(fn ->
+        assert {:noreply, [], :state} = Rocket.Pusher.handle_events([payload], self(), :state)
+      end)
+
+    refute log =~ "[Rocket] push failed"
   end
 
   test "push collector callbacks keep producer state when there is no demand" do
     assert {:producer, :ok} = Rocket.PushCollector.init([])
     assert {:noreply, [], :state} = Rocket.PushCollector.handle_demand(10, :state)
+  end
+
+  defp count_occurrences(log, message) do
+    log
+    |> String.split(message)
+    |> length()
+    |> Kernel.-(1)
   end
 end
