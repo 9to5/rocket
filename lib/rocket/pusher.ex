@@ -24,10 +24,8 @@ defmodule Rocket.Pusher do
   end
 
   defp perform_event(event) do
-    case request_module().perform(event) do
-      {:error, reason} -> Logger.error("[Rocket] push failed: #{inspect(reason)}")
-      _result -> :ok
-    end
+    request_module().perform(event)
+    :ok
   rescue
     error -> Logger.error("[Rocket] push raised: #{Exception.message(error)}")
   catch

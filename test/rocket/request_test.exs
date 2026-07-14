@@ -6,6 +6,15 @@ defmodule Rocket.RequestTest do
 
   alias Rocket.Request
 
+  defmodule CustomResponseHandler do
+    @behaviour Rocket.Response.ResponseHandler
+
+    @impl Rocket.Response.ResponseHandler
+    def call(status, payload, body) do
+      send(self(), {:custom_handler_called, status, payload, body})
+    end
+  end
+
   setup :verify_on_exit!
 
   setup do
@@ -53,6 +62,23 @@ defmodule Rocket.RequestTest do
     assert Request.perform(payload) == {:error, %{"error" => "invalid"}}
   end
 
+  test "perform/2 preserves custom call/3 response handlers and structured results" do
+    payload = %{"message" => %{"token" => "bad-token"}}
+
+    expect(Rocket.ConfigProviderMock, :generate, fn ->
+      {:ok, %{headers: [], url: "https://example.test/send"}}
+    end)
+
+    expect(Rocket.HTTPClientMock, :post, fn _url, _headers, _body, _opts ->
+      {:ok, %{status: 400, body: ~s({"error":"invalid"})}}
+    end)
+
+    assert Request.perform(payload, response_handler: CustomResponseHandler) ==
+             {:error, %{"error" => "invalid"}}
+
+    assert_receive {:custom_handler_called, 400, ^payload, %{"error" => "invalid"}}
+  end
+
   test "returns invalid JSON errors from HTTP responses" do
     payload = %{"message" => %{"token" => "device-token"}}
 
@@ -74,11 +100,21 @@ defmodule Rocket.RequestTest do
   test "returns configuration errors without posting" do
     expect(Rocket.ConfigProviderMock, :generate, fn -> {:error, :missing_credentials} end)
 
-    assert Request.perform(%{"message" => %{}}) == {:error, :missing_credentials}
+    log =
+      capture_log(fn ->
+        assert Request.perform(%{"message" => %{}}) == {:error, :missing_credentials}
+      end)
+
+    assert count_occurrences(log, "[Rocket] configuration error :missing_credentials") == 1
   end
 
   test "returns encode errors without configuration lookup" do
-    assert {:error, {:encode_error, %Protocol.UndefinedError{}}} = Request.perform(self())
+    log =
+      capture_log(fn ->
+        assert {:error, {:encode_error, %Protocol.UndefinedError{}}} = Request.perform(self())
+      end)
+
+    assert count_occurrences(log, "[Rocket] JSON encoding error") == 1
   end
 
   test "returns Finch transport errors and logs the connection issue" do
@@ -97,6 +133,13 @@ defmodule Rocket.RequestTest do
         assert Request.perform(payload) == {:error, :timeout}
       end)
 
-    assert log =~ "[Rocket] connection error :timeout"
+    assert count_occurrences(log, "[Rocket] connection error :timeout") == 1
+  end
+
+  defp count_occurrences(log, message) do
+    log
+    |> String.split(message)
+    |> length()
+    |> Kernel.-(1)
   end
 end
