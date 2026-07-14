@@ -1,6 +1,10 @@
 defmodule Rocket.Response.ResponseHandler do
-  @doc """
-  Handles status_code with payload
+  @moduledoc """
+  Behaviour for handling parsed FCM responses.
   """
-  @callback call(status_code :: Integer.t(), payload :: Map.t(), body :: Map.t()) :: any
+
+  @doc """
+  Handles an HTTP status, the original payload, and a parsed response body.
+  """
+  @callback call(status_code :: integer(), payload :: term(), body :: term()) :: any()
 end

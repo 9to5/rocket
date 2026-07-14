@@ -1,20 +1,38 @@
 defmodule Rocket.Pusher do
-  use GenStage
+  @moduledoc """
+  GenStage consumer that performs queued FCM requests.
+  """
 
-  def start_link do
+  use GenStage
+  require Logger
+
+  @spec start_link(keyword()) :: GenServer.on_start()
+  def start_link(_opts \\ []) do
     GenStage.start_link(__MODULE__, :state_doesnt_matter)
   end
 
+  @impl GenStage
   def init(state) do
     {:consumer, state, subscribe_to: [Rocket.PushCollector]}
   end
 
+  @impl GenStage
   def handle_events(events, _from, state) do
-    for event <- events do
-      Rocket.Request.perform(event)
-    end
+    Enum.each(events, &perform_event/1)
 
-    # We are a consumer, so we would never emit items.
     {:noreply, [], state}
   end
+
+  defp perform_event(event) do
+    case request_module().perform(event) do
+      {:error, reason} -> Logger.error("[Rocket] push failed: #{inspect(reason)}")
+      _result -> :ok
+    end
+  rescue
+    error -> Logger.error("[Rocket] push raised: #{Exception.message(error)}")
+  catch
+    kind, reason -> Logger.error("[Rocket] push exited: #{inspect({kind, reason})}")
+  end
+
+  defp request_module, do: Application.get_env(:rocket, :request_module, Rocket.Request)
 end

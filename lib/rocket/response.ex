@@ -1,19 +1,19 @@
 defmodule Rocket.Response do
   @moduledoc ~S"
-    Responses for Rocket
+    Parses HTTP responses returned by the FCM API.
   "
-
-  alias HTTPoison.Response
-  alias HTTPoison.Error
 
   @success_status 200..299
   @client_error_status 400..499
   @server_error_status 500..599
 
-  def parse({:ok, %Response{status_code: status, body: body}}) when status in @success_status,
-    do: {:ok, Jason.decode!(body)}
+  @spec parse({:ok, Rocket.HTTPClient.response()} | {:error, term()}) ::
+          {:ok, map()} | {:error, term()}
+  def parse({:ok, %{status: status, body: body}}) when status in @success_status do
+    decode_body(body)
+  end
 
-  def parse({:ok, %Response{status_code: status, body: body}}) when status in @client_error_status do
+  def parse({:ok, %{status: status, body: body}}) when status in @client_error_status do
     body
     |> Jason.decode()
     |> case do
@@ -22,8 +22,18 @@ defmodule Rocket.Response do
     end
   end
 
-  def parse({:ok, %Response{status_code: status, body: body}}) when status in @server_error_status, do: body
-  def parse({_, %Response{status_code: _, body: _} = response}), do: response
-  def parse({:error, %Error{id: nil, reason: :timeout}}), do: {:error, "Timeout"}
-  def parse({:error, %Error{id: nil, reason: _reason}}), do: {:error, "Unknown error"}
+  def parse({:ok, %{status: status, body: body}}) when status in @server_error_status,
+    do: {:error, body}
+
+  def parse({_, %{status: _status, body: _body} = response}), do: {:error, response}
+  def parse({:error, %{reason: :timeout}}), do: {:error, :timeout}
+  def parse({:error, %{reason: reason}}), do: {:error, reason}
+  def parse({:error, reason}), do: {:error, reason}
+
+  defp decode_body(body) do
+    case Jason.decode(body) do
+      {:ok, decoded} -> {:ok, decoded}
+      {:error, error} -> {:error, {:invalid_json, error, body}}
+    end
+  end
 end

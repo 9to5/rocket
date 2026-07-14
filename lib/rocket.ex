@@ -1,12 +1,14 @@
 defmodule Rocket do
   @moduledoc """
-  The Worker of Push Client for Exq
-  PushWorker can be used to issue Firebase Downstream Messages.
+  Firebase Cloud Messaging HTTP v1 client.
   """
 
   alias Rocket.Request
-  require Logger
 
+  @doc """
+  Sends a single payload to FCM synchronously.
+  """
+  @spec push(term()) :: {:ok, map()} | {:error, term()}
   def push(payload) do
     Request.perform(payload)
   end
